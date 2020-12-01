@@ -88,7 +88,7 @@ public class CommonDAL {
      String pDataBaseName, String tnsDescriptor) throws CommonDALExceptions {
      */
     public static String getDbConnStr(DbTypes ptype, String pHostName,
-            String pDataBaseName) throws CommonDALExceptions {
+            String pDataBaseName)  {
         String wres = "";
 
         switch (ptype) {

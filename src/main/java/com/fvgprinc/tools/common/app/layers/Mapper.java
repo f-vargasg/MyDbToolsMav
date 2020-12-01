@@ -2,14 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.fvgprinc.tools.common.datalayer;
+package com.fvgprinc.tools.common.app.layers;
 
+
+import com.fvgprinc.tools.common.app.dbconnection2.DbConn;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import com.fvgprinc.tools.common.app.dbconnection.DbConnFactory;
 import com.fvgprinc.tools.common.app.layers.ParamAction;
 import com.fvgprinc.tools.common.string.MyCommonString;
 
@@ -19,12 +20,13 @@ import com.fvgprinc.tools.common.string.MyCommonString;
  */
 public abstract class Mapper {
 
-    protected Connection conn;
+    // protected Connection conn;
+    protected DbConn dbConn;
+    // protected String strConn;
 
-    public Mapper() throws SQLException, CommonDALExceptions  {
-        this.conn = DbConnFactory.getInstance().createDbConnManager()[0].createDbConn().getConnection();
-    }
+    
 
+    /*
     public Mapper(int indConn) throws SQLException, CommonDALExceptions  {
         this.conn = DbConnFactory.getInstance().createDbConnManager()[indConn].createDbConn().getConnection();
     }
@@ -33,6 +35,7 @@ public abstract class Mapper {
     {
         this.conn = pconn;
     }
+    */
 
     /**
      * Given rs, convert to entity.As is until run time, which is known the
@@ -67,11 +70,13 @@ public abstract class Mapper {
      * @throws SQLException
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
+        Connection conn = this.dbConn.openConexion();
         PreparedStatement stm;
-        stm = this.conn.prepareStatement(sqlStm);
+        stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         stm.execute();
         stm.close();
+        conn.close();
     }
 
     /**
@@ -84,10 +89,12 @@ public abstract class Mapper {
      */
     protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
+        Connection conn = this.dbConn.openConexion();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         ResultSet rs = stm.executeQuery();
         stm.close();
+        conn.close();
         return rs;
 
     }
