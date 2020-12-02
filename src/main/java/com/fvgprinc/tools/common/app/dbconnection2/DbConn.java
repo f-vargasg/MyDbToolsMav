@@ -17,6 +17,7 @@ import java.sql.Connection;
  */
 public abstract class DbConn {
     
+    protected Connection conn;
     protected String databaseName;
     protected String ipAddress;
     protected String ipPort;
@@ -71,12 +72,14 @@ public abstract class DbConn {
         this.dbType = dbType;
     }
     
-    
-    
+      
     
    
     public abstract String getConnStr();
-    public abstract Connection openConexion();
+    public Connection getConnection()
+    {
+        return this.conn;
+    }
     
     
 }

@@ -70,13 +70,13 @@ public abstract class Mapper {
      * @throws SQLException
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
-        Connection conn = this.dbConn.openConexion();
+        Connection conn = this.dbConn.getConnection();
         PreparedStatement stm;
         stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         stm.execute();
         stm.close();
-        conn.close();
+        // conn.close();
     }
 
     /**
@@ -89,12 +89,12 @@ public abstract class Mapper {
      */
     protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
-        Connection conn = this.dbConn.openConexion();
+        Connection conn = this.dbConn.getConnection();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         ResultSet rs = stm.executeQuery();
         stm.close();
-        conn.close();
+        //conn.close();
         return rs;
 
     }

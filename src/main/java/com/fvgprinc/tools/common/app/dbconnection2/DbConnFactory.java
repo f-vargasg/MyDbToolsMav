@@ -6,24 +6,29 @@
 package com.fvgprinc.tools.common.app.dbconnection2;
 
 import com.fvgprinc.tools.common.datalayer.CommonDAL.DbTypes;
+import com.fvgprinc.tools.common.datalayer.CommonDALExceptions;
+import java.sql.SQLException;
 
 /**
  *
  * @author garfi
  */
 public class DbConnFactory {
-
-    public static DbConn getDbConn (DbTypes dbTypes)
+    private static  DbConn dbConn;
+    
+    public static DbConn getDbConn (DbTypes dbTypes) throws SQLException, CommonDALExceptions
     {
-        DbConn res;
+        if (dbConn != null) {
+            return dbConn;
+        }
         switch (dbTypes) {
             case MariaDb:
-                res = new MariaDbConn();
+                dbConn = new MariaDbConn();
                 break;
             default:
-                res = null;
+                dbConn = null;
         }
-        return res;
+        return dbConn;
     }
             
 }
