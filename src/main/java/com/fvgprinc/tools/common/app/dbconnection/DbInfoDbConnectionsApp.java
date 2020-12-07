@@ -5,9 +5,9 @@
 package com.fvgprinc.tools.common.app.dbconnection;
 
 import java.util.ArrayList;
-import com.fvgprinc.tools.common.app.configuration.AppDbParam;
+import com.fvgprinc.tools.common.app.dbconfiguration.AppDbParam;
 import com.fvgprinc.tools.common.app.configuration.AppParameter;
-import com.fvgprinc.tools.common.app.configuration.DbParamFactory;
+import com.fvgprinc.tools.common.app.dbconfiguration.DbParamFactory;
 import com.fvgprinc.tools.common.app.configuration.ParameterManager;
 
 /**
