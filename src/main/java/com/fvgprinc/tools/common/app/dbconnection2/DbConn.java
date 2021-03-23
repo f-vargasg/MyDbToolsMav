@@ -5,18 +5,16 @@
  */
 package com.fvgprinc.tools.common.app.dbconnection2;
 
-
 // import com.fvgprinc.tools.common.datalayer;
 import com.fvgprinc.tools.common.datalayer.CommonDAL.DbTypes;
 import java.sql.Connection;
-
 
 /**
  *
  * @author garfi
  */
 public abstract class DbConn {
-    
+
     protected Connection conn;
     protected String databaseName;
     protected String ipAddress;
@@ -60,7 +58,6 @@ public abstract class DbConn {
 
     public DbConn() {
     }
-    
 
     public DbConn(String databaseName, String ipAddress, String ipPort, String user, String pass, boolean autoCommit, DbTypes dbType) {
         this.databaseName = databaseName;
@@ -71,15 +68,11 @@ public abstract class DbConn {
         this.autoCommit = autoCommit;
         this.dbType = dbType;
     }
-    
-      
-    
-   
+
     public abstract String getConnStr();
-    public Connection getConnection()
-    {
+
+    public Connection getConnection() {
         return this.conn;
     }
-    
-    
+
 }

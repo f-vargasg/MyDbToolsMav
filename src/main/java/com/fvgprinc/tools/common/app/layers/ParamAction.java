@@ -12,7 +12,7 @@ public class ParamAction {
 
     public enum JavaTypes {
 
-        STRING, INTEGER, DOUBLE, DATEJAVASQL, TIMESTAMPJAVASQL, LONG
+        STRING, INTEGER, DOUBLE, DATEJAVASQL, TIMESTAMPJAVASQL, LONG, SHORT
     }
     private String columName;
 

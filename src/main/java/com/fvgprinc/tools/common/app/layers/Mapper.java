@@ -11,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import com.fvgprinc.tools.common.app.layers.ParamAction;
 import com.fvgprinc.tools.common.string.MyCommonString;
 
 /**
@@ -130,6 +129,8 @@ public abstract class Mapper {
                 case LONG:
                     stm.setLong(i + 1, (Long) (pValues.get(i).getValue()));
                     break;
+                case SHORT:
+                    stm.setShort(i + 1, (Short) (pValues.get(i).getValue()));
                 default:
                     break;
             }
