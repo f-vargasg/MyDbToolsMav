@@ -9,6 +9,8 @@ import com.fvgprinc.tools.common.app.configuration.ParameterManager;
 
 /**
  * sub factory
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author francisco
  */
 public class DbParamManager extends  ParameterManager {

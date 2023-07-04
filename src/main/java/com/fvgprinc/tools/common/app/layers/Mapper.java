@@ -5,7 +5,8 @@
 package com.fvgprinc.tools.common.app.layers;
 
 
-import com.fvgprinc.tools.common.app.dbconnection2.DbConn;
+import com.fvgprinc.tools.common.app.dbconnection3.ConnectionDB;
+import com.fvgprinc.tools.common.app.dbconnection4.DataManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,11 +20,16 @@ import com.fvgprinc.tools.common.string.MyCommonString;
  */
 public abstract class Mapper {
 
-    // protected Connection conn;
-    protected DbConn dbConn;
-    // protected String strConn;
-
     
+//   protected ConnectionDB dbConn;
+
+    /**
+     *
+     */
+   protected  DataManager dm;
+   protected Connection conn;
+    // protected String strConn;
+   
 
     /*
     public Mapper(int indConn) throws SQLException, CommonDALExceptions  {
@@ -69,7 +75,6 @@ public abstract class Mapper {
      * @throws SQLException
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
-        Connection conn = this.dbConn.getConnection();
         PreparedStatement stm;
         stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
@@ -88,7 +93,6 @@ public abstract class Mapper {
      */
     protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
-        Connection conn = this.dbConn.getConnection();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         ResultSet rs = stm.executeQuery();
@@ -108,6 +112,13 @@ public abstract class Mapper {
 
     protected abstract Object doFind(ArrayList<ParamAction> keyFiedls) throws SQLException;
 
+    /**
+     *
+     * @param stm
+     * @param pValues
+     * @return
+     * @throws SQLException
+     */
     protected PreparedStatement setParamPreparedStm(PreparedStatement stm, ArrayList<ParamAction> pValues) throws SQLException {
         for (int i = 0; i < pValues.size(); i++) {
             switch (pValues.get(i).getDataType()) {

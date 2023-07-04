@@ -14,7 +14,8 @@ import com.fvgprinc.tools.common.app.configuration.source.ConfigFileFactory;
 import com.fvgprinc.tools.common.app.dbconnection.DbConnectionInfo;
 
 /**
- *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author francisco
  */
 public class AppDbParam extends AppParameter {

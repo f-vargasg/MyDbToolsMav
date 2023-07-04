@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 /**
  *
+ * @deprecated Mejor utilizar DIContainer y DataManager
  * @author garfi
  */
 public class DbConnFactory {
@@ -39,8 +40,8 @@ public class DbConnFactory {
         Ir a la configuración y leer el tipo de Base de datos
         y la configuración de cada DB
         
-        */
-    /*
+     */
+ /*
         
         if (dbConn != null) {
             return dbConn;
@@ -54,5 +55,5 @@ public class DbConnFactory {
         }
         return dbConn;
     }
-*/
+     */
 }

@@ -5,7 +5,8 @@
 package com.fvgprinc.tools.common.app.dbconnection;
 
 /**
- *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author francisco
  */
 public class HSqlDbConn extends DbConn {

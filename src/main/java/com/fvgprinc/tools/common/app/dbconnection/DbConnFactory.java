@@ -11,7 +11,8 @@ import com.fvgprinc.tools.common.datalayer.CommonDALExceptions;
 /**
  * This combine Abstract Factory with singleton. Note: The first time all
  * connections specified in the configuration file are open.
- *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author francisco
  */
 public class DbConnFactory {

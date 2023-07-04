@@ -18,7 +18,8 @@ import com.fvgprinc.tools.common.utilities.CryptStringFvg;
 
 /**
  * Es el producto abstracto
- *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author francisco
  */
 public abstract class DbConn {

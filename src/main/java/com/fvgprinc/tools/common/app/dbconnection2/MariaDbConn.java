@@ -11,7 +11,8 @@ import com.fvgprinc.tools.common.string.MyCommonString;
 import java.sql.SQLException;
 
 /**
- *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author garfi
  */
 

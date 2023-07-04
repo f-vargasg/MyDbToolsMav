@@ -8,7 +8,8 @@ import com.fvgprinc.tools.common.app.configuration.AppConfigUtils;
 import com.fvgprinc.tools.common.app.configuration.ParameterManager;
 
 /**
- *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author francisco
  */
 public class DbParamFactory {

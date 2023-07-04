@@ -11,6 +11,8 @@ import java.sql.Connection;
 
 /**
  *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author garfi
  */
 public abstract class DbConn {

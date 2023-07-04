@@ -8,7 +8,8 @@ import java.sql.SQLException;
 import com.fvgprinc.tools.common.datalayer.CommonDALExceptions;
 
 /**
- *
+* @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author francisco
  */
 public class MySqlDbConnManager extends DbConnManager {

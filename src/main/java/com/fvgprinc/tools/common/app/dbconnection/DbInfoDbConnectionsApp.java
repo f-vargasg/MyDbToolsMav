@@ -14,6 +14,8 @@ import com.fvgprinc.tools.common.app.configuration.ParameterManager;
  * Se encarga de ser inicializada y obtener la informacion de todas las
  * conexiones de la aplicaicon
  *
+ * @deprecated 
+ * Mejor utilizar DIContainer y DataManager
  * @author fvargas
  */
 public class DbInfoDbConnectionsApp {
