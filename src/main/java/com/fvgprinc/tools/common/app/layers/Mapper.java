@@ -5,7 +5,6 @@
 package com.fvgprinc.tools.common.app.layers;
 
 
-import com.fvgprinc.tools.common.app.dbconnection3.ConnectionDB;
 import com.fvgprinc.tools.common.app.dbconnection4.DataManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -76,6 +75,7 @@ public abstract class Mapper {
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         PreparedStatement stm;
+        this.conn = dm.getConnectioin();
         stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         stm.execute();
@@ -93,6 +93,7 @@ public abstract class Mapper {
      */
     protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
+        this.conn = dm.getConnectioin();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         ResultSet rs = stm.executeQuery();
