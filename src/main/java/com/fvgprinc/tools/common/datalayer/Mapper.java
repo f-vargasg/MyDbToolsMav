@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.fvgprinc.tools.common.app.layers;
+package com.fvgprinc.tools.common.datalayer;
 
 
-import com.fvgprinc.tools.common.app.dbconnection4.DataManager;
+import com.fvgprinc.tools.common.dbconnection.DataManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -79,8 +79,7 @@ public abstract class Mapper {
         stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         stm.execute();
-        stm.close();
-        // conn.close();
+        this.conn.close();
     }
 
     /**
@@ -97,8 +96,7 @@ public abstract class Mapper {
         PreparedStatement stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         ResultSet rs = stm.executeQuery();
-        stm.close();
-        //conn.close();
+        // this.conn.close();
         return rs;
 
     }
