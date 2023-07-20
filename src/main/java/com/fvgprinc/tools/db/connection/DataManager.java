@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.fvgprinc.tools.common.dbconnection;
+package com.fvgprinc.tools.db.connection;
 
 import com.fvgprinc.tools.common.string.MyCommonString;
 import java.sql.Connection;

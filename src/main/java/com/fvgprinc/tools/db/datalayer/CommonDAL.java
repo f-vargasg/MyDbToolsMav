@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.fvgprinc.tools.common.datalayer;
+package com.fvgprinc.tools.db.datalayer;
 
+import com.fvgprinc.tools.common.utilities.MyPropertyLoader;
+import com.fvgprinc.tools.common.utilities.PropertyLoader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,8 +16,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Properties;
-import com.fvgprinc.tools.common.utilities.MyPropertyLoader;
-import com.fvgprinc.tools.common.utilities.PropertyLoader;
+
 
 public class CommonDAL {
 
