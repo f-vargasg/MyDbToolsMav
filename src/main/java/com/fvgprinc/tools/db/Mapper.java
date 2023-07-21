@@ -2,11 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.fvgprinc.tools.db.datalayer;
+package com.fvgprinc.tools.db;
 
 
 import com.fvgprinc.tools.common.string.MyCommonString;
-import com.fvgprinc.tools.db.connection.DataManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

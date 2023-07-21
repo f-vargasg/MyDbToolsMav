@@ -2,10 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.fvgprinc.tools.db.datalayer;
+package com.fvgprinc.tools.db;
 
-import com.fvgprinc.tools.common.utilities.MyPropertyLoader;
-import com.fvgprinc.tools.common.utilities.PropertyLoader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -182,6 +180,8 @@ public class CommonDAL {
      * @throws FileNotFoundException
      * @throws IOException
      */
+    
+    /*
     public static Properties readDbPropertiesFromFile(String propName) throws FileNotFoundException, IOException {
         new MyPropertyLoader();
         Properties properties;
@@ -190,6 +190,7 @@ public class CommonDAL {
 
         return properties;
     }
+*/
 
     public static Properties readDBProperties(String puser, String ppassword) {
         Properties p = new Properties();

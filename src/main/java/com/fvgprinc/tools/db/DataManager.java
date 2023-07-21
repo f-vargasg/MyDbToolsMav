@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.fvgprinc.tools.db.connection;
+package com.fvgprinc.tools.db;
 
-import com.fvgprinc.tools.common.string.MyCommonString;
+import com.fvgprinc.tools.string.MyCommonString;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
@@ -12,9 +12,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration2.HierarchicalConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.hsqldb.jdbc.JDBCDataSource;
 import org.sqlite.SQLiteDataSource;
@@ -36,24 +39,34 @@ public class DataManager {
 
     public DataManager(String pDataBaseName) {
         try {
+            // try {
+            // String scrap = MyCommonString.EMPTYSTR;
             readConfigurationDb(pDataBaseName);
-
+            
+            /*} catch (ConfigurationException ex) {
+            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+            } */
         } catch (ConfigurationException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void readConfigurationDb(String pDataBaseName) throws ConfigurationException {
+    private void readConfigurationDb(String pDataBaseName) throws ConfigurationException  {
+
         // read configuracion from configuration file
-        XMLConfiguration config = new XMLConfiguration(getClass().getResource("/configuracion.xml"));
+    //     XMLConfiguration config = new XMLConfiguration(getClass().getResource("/configuracion.xml"));
+      Parameters params = new Parameters();
+        FileBasedConfigurationBuilder<XMLConfiguration>  builder = 
+                 new FileBasedConfigurationBuilder<> (XMLConfiguration.class).configure(params.xml().setFileName("configuracion.xml"));
+       XMLConfiguration config = builder.getConfiguration();
 
         // Acceder a la llave 'connection'
         HierarchicalConfiguration sub = config.configurationAt("connections.connection(0)");
         BasicDataSource basicDataSource;
-        List<HierarchicalConfiguration> connections = config.configurationsAt("connections.connection");
+        List<HierarchicalConfiguration<ImmutableNode>> connections = config.configurationsAt("connections.connection");
         this.dataBaseName = MyCommonString.EMPTYSTR;
         boolean found = false;
-        for (Iterator<HierarchicalConfiguration> iterator = connections.iterator(); iterator.hasNext() && !found;) {
+        for (Iterator<HierarchicalConfiguration<ImmutableNode>> iterator = connections.iterator(); iterator.hasNext() && !found;) {
             HierarchicalConfiguration next = iterator.next();
             if (next.getString("dbIdConn").compareTo(pDataBaseName) == 0) {
                 found = true;
