@@ -39,26 +39,20 @@ public class DataManager {
 
     public DataManager(String pDataBaseName) {
         try {
-            // try {
-            // String scrap = MyCommonString.EMPTYSTR;
             readConfigurationDb(pDataBaseName);
-            
-            /*} catch (ConfigurationException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
-            } */
         } catch (ConfigurationException ex) {
             Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void readConfigurationDb(String pDataBaseName) throws ConfigurationException  {
+    private void readConfigurationDb(String pDataBaseName) throws ConfigurationException {
 
         // read configuracion from configuration file
-    //     XMLConfiguration config = new XMLConfiguration(getClass().getResource("/configuracion.xml"));
-      Parameters params = new Parameters();
-        FileBasedConfigurationBuilder<XMLConfiguration>  builder = 
-                 new FileBasedConfigurationBuilder<> (XMLConfiguration.class).configure(params.xml().setFileName("configuracion.xml"));
-       XMLConfiguration config = builder.getConfiguration();
+        //     XMLConfiguration config = new XMLConfiguration(getClass().getResource("/configuracion.xml"));
+        Parameters params = new Parameters();
+        FileBasedConfigurationBuilder<XMLConfiguration> builder
+                = new FileBasedConfigurationBuilder<>(XMLConfiguration.class).configure(params.xml().setFileName("configuracion.xml"));
+        XMLConfiguration config = builder.getConfiguration();
 
         // Acceder a la llave 'connection'
         HierarchicalConfiguration sub = config.configurationAt("connections.connection(0)");
@@ -78,12 +72,11 @@ public class DataManager {
                     sqliteDataSource.setUrl(dbUrl);
                     this.dataSource = sqliteDataSource;
                 } else if (dbDriver.toUpperCase().contains("HSQLDB")) {
-                     JDBCDataSource HsqlDbDataSource = new JDBCDataSource();
-                     HsqlDbDataSource.setURL(dbUrl);
-                     HsqlDbDataSource.setUser(dbUserName);
-                     this.dataSource = HsqlDbDataSource;
-                }
-                else {
+                    JDBCDataSource HsqlDbDataSource = new JDBCDataSource();
+                    HsqlDbDataSource.setURL(dbUrl);
+                    HsqlDbDataSource.setUser(dbUserName);
+                    this.dataSource = HsqlDbDataSource;
+                } else {
                     this.dataBaseName = next.getString("dbIdConn");
                     basicDataSource = new BasicDataSource();
                     basicDataSource.setDriverClassName(next.getString("dbDriver"));
