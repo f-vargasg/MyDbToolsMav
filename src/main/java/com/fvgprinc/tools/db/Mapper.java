@@ -78,6 +78,7 @@ public abstract class Mapper {
         stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         stm.execute();
+        stm.close();
         this.conn.close();
     }
 
@@ -86,18 +87,40 @@ public abstract class Mapper {
      *
      * @param sqlStm
      * @param pValues
-     * @return resultset of the execution of sqlStm
+     * @return resultset of the execution of sqlStm, don't close connection
+     * The invoker, can be close connection
      * @throws SQLException
+     * @deprecated  use {@link #doStmReturn(java.lang.String, java.util.ArrayList) }
      */
-    protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
+    @Deprecated
+protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
         this.conn = dm.getConnectioin();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
         stm = this.setParamPreparedStm(stm, pValues);
         ResultSet rs = stm.executeQuery();
+        // stm.close();
+        //this.conn.close();
         // this.conn.close();
         return rs;
-
+    }
+    
+    /**
+     *
+     * @param sqlStm
+     * @param pValues
+     * @return  preparedStatement with no data, after invocation, execute 
+     * @throws SQLException
+     */
+    protected PreparedStatement doStmReturn (String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
+        // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
+        this.conn = dm.getConnectioin();
+        PreparedStatement stm = conn.prepareStatement(sqlStm);
+        stm = this.setParamPreparedStm(stm, pValues);
+        return stm;
+        // stm.close();
+        //this.conn.close();
+        // this.conn.close();
     }
 
     public abstract void insert(ArrayList<ParamAction> paramDLs) throws SQLException;
