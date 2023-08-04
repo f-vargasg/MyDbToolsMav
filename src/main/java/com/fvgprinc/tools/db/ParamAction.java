@@ -4,6 +4,8 @@
  */
 package com.fvgprinc.tools.db;
 
+import com.fvgprinc.tools.common.string.MyCommonString;
+
 /**
  *
  * @author fvargas
@@ -72,14 +74,54 @@ public class ParamAction {
         this.value = value;
     }
 
+    private boolean cmpWithLike;
+
+    /**
+     * Get the value of cmpWithLike
+     *
+     * @return the value of cmpWithLike
+     */
+    public boolean isCmpWithLike() {
+        return cmpWithLike;
+    }
+
+    /**
+     * Set the value of cmpWithLike
+     *
+     * @param cmpWithLike new value of cmpWithLike
+     */
+    public void setCmpWithLike(boolean cmpWithLike) {
+        this.cmpWithLike = cmpWithLike;
+    }
+
+    public ParamAction(String columName, JavaTypes dataType, Object value, boolean cmpLike) {
+        this.columName = columName;
+        this.dataType = dataType;
+        this.value = value;
+        this.cmpWithLike = cmpLike;
+    }
+
     public ParamAction(String columName, JavaTypes dataType, Object value) {
         this.columName = columName;
         this.dataType = dataType;
         this.value = value;
+        this.cmpWithLike = false;
     }
 
     public ParamAction(JavaTypes dataType, Object value) {
         this.dataType = dataType;
         this.value = value;
+        this.cmpWithLike = false;
+    }
+
+    public String buildCond() {
+        String res;
+
+        res = this.columName + " = " + "?";
+        if (this.dataType == JavaTypes.STRING) {
+            res = this.columName + (this.cmpWithLike ? " LIKE " : " = ") + "?";
+        }
+
+        return res;
     }
 }

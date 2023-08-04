@@ -4,7 +4,6 @@
  */
 package com.fvgprinc.tools.db;
 
-
 import com.fvgprinc.tools.common.string.MyCommonString;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,16 +17,14 @@ import java.util.ArrayList;
  */
 public abstract class Mapper {
 
-    
 //   protected ConnectionDB dbConn;
-
     /**
      *
      */
-   protected  DataManager dm;
-   protected Connection conn;
+    protected DataManager dm;
+    protected Connection conn;
     // protected String strConn;
-   
+
 
     /*
     public Mapper(int indConn) throws SQLException, CommonDALExceptions  {
@@ -38,8 +35,7 @@ public abstract class Mapper {
     {
         this.conn = pconn;
     }
-    */
-
+     */
     /**
      * Given rs, convert to entity.As is until run time, which is known the
      * particular type of the entity, the return type is an object. The doLoad
@@ -87,13 +83,14 @@ public abstract class Mapper {
      *
      * @param sqlStm
      * @param pValues
-     * @return resultset of the execution of sqlStm, don't close connection
-     * The invoker, can be close connection
+     * @return resultset of the execution of sqlStm, don't close connection The
+     * invoker, can be close connection
      * @throws SQLException
-     * @deprecated  use {@link #doStmReturn(java.lang.String, java.util.ArrayList) }
+     * @deprecated use {@link #doStmReturn(java.lang.String, java.util.ArrayList)
+     * }
      */
     @Deprecated
-protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
+    protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
         this.conn = dm.getConnectioin();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
@@ -104,15 +101,15 @@ protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValue
         // this.conn.close();
         return rs;
     }
-    
+
     /**
      *
      * @param sqlStm
      * @param pValues
-     * @return  preparedStatement with no data, after invocation, execute 
+     * @return preparedStatement with no data, after invocation, execute
      * @throws SQLException
      */
-    protected PreparedStatement doStmReturn (String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
+    protected PreparedStatement doStmReturn(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
         this.conn = dm.getConnectioin();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
@@ -180,8 +177,14 @@ protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValue
         String res = "";
         boolean ft = true;
         for (int i = 0; i < pValues.size(); i++) {
-            res += ((!ft ? " and " : MyCommonString.EMPTYSTR) + pValues.get(i).getColumName() + " = ?");
+            // res += ((!ft ? " and " : MyCommonString.EMPTYSTR) + pValues.get(i).getColumName() + " =  ?");
+            String cond = pValues.get(i).buildCond();
+            if (cond.compareTo(MyCommonString.EMPTYSTR) != 0) {
+                res += ((!ft ? " and " : MyCommonString.EMPTYSTR) + cond);
+            }
+            ft = false;
         }
         return res;
     }
+
 }
