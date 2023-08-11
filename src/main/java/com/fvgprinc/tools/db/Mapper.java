@@ -4,7 +4,7 @@
  */
 package com.fvgprinc.tools.db;
 
-import com.fvgprinc.tools.common.string.MyCommonString;
+import com.fvgprinc.tools.string.MyCommonString;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

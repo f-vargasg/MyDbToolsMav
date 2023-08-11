@@ -4,7 +4,6 @@
  */
 package com.fvgprinc.tools.db;
 
-import com.fvgprinc.tools.common.string.MyCommonString;
 
 /**
  *
