@@ -128,7 +128,7 @@ public abstract class Mapper {
 
     protected abstract Object doLoad(ResultSet rs) throws SQLException;
 
-    protected abstract Object doFind(ArrayList<ParamAction> keyFiedls) throws SQLException;
+    public abstract Object doFind(ArrayList<ParamAction> keyFiedls) throws SQLException;
 
     /**
      *
