@@ -131,7 +131,9 @@ public abstract class Mapper {
     public abstract Object doFind(ArrayList<ParamAction> keyFiedls) throws SQLException;
 
     /**
-     *
+     * Este retorna un PreparedStatemets de acuerdo a la lista de objetos de tipo ParamAction 
+     * Este no le interesa los nombres de las columnas ya que asume que la sentencia SQL
+     * tiene los tags "?" que corresponde a los parametros
      * @param stm
      * @param pValues
      * @return
@@ -172,6 +174,7 @@ public abstract class Mapper {
      *
      * @param pValues
      * @return sql cond in jdbc standard
+     * @deprecated best use ParamAction.queryCond (ArrayList<ParamAction> pValues)
      */
     protected String queryCond(ArrayList<ParamAction> pValues) {
         String res = "";

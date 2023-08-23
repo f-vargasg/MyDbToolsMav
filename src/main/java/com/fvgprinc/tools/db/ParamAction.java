@@ -4,6 +4,9 @@
  */
 package com.fvgprinc.tools.db;
 
+import com.fvgprinc.tools.string.MyCommonString;
+import java.util.ArrayList;
+
 
 /**
  *
@@ -108,6 +111,7 @@ public class ParamAction {
     }
 
     public ParamAction(JavaTypes dataType, Object value) {
+        this.columName = MyCommonString.EMPTYSTR;
         this.dataType = dataType;
         this.value = value;
         this.cmpWithLike = false;
@@ -121,6 +125,28 @@ public class ParamAction {
             res = this.columName + (this.cmpWithLike ? " LIKE " : " = ") + "?";
         }
 
+        return res;
+    }
+    /**
+     * Dada una lista de parametros de tipo ParamAction, retorna una condición 
+     * para una sentencia sql
+     * Los objetos ParamAction de la lista DEBEN de tener el nombre la columna
+     * OJO: Retorna una hilarera con el tag "?", para luego ser aplicado a las 
+     * operaciones de JDBC (ie usando PreparedStatemet)
+     * @param pValues
+     * @return 
+     */
+    public static  String queryCond(ArrayList<ParamAction> pValues) {
+        String res = "";
+        boolean ft = true;
+        for (int i = 0; i < pValues.size(); i++) {
+            // res += ((!ft ? " and " : MyCommonString.EMPTYSTR) + pValues.get(i).getColumName() + " =  ?");
+            String cond = pValues.get(i).buildCond();
+            if (cond.compareTo(MyCommonString.EMPTYSTR) != 0) {
+                res += ((!ft ? " and " : MyCommonString.EMPTYSTR) + cond);
+            }
+            ft = false;
+        }
         return res;
     }
 }
