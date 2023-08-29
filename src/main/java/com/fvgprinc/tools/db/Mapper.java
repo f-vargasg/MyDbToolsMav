@@ -22,7 +22,7 @@ public abstract class Mapper {
      *
      */
     protected DataManager dm;
-    protected Connection conn;
+    // protected Connection conn;
     // protected String strConn;
 
 
@@ -62,24 +62,30 @@ public abstract class Mapper {
     }
 
     /**
-     * Executes SQL statement not return recordsets
+     * Executes SQL statement NOT return recordsets
      *
      * @param sqlStm
      * @param pValues
      * @throws SQLException
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
-        PreparedStatement stm;
-        this.conn = dm.getConnectioin();
-        stm = conn.prepareStatement(sqlStm);
-        stm = this.setParamPreparedStm(stm, pValues);
-        stm.execute();
-        stm.close();
-        this.conn.close();
+        // PreparedStatement stm;
+        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(sqlStm);) {
+            this.setParamPreparedStm(stm, pValues);
+            stm.execute();
+        } 
+        catch (Exception ex) {
+            throw  ex;
+        }
+
+        // this.conn.close();
     }
 
     /**
-     * Returns resultSet product of execution of sqlStm.
+     * Returns resultSet product of execution of sqlStm. requires: the
+     * connection, open it before calling this method, Therefore it is the
+     * caller's responsibility to close the connection. Example: this.conn
+     * =dm.getConnection(); doStatament (....) this.conn.close();
      *
      * @param sqlStm
      * @param pValues
@@ -91,33 +97,35 @@ public abstract class Mapper {
      */
     @Deprecated
     protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
-        // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
-        this.conn = dm.getConnectioin();
-        PreparedStatement stm = conn.prepareStatement(sqlStm);
-        stm = this.setParamPreparedStm(stm, pValues);
-        ResultSet rs = stm.executeQuery();
-        // stm.close();
-        //this.conn.close();
-        // this.conn.close();
-        return rs;
+        ResultSet res;
+        try ( Connection conn = dm.getConnectioin()) {
+            PreparedStatement stm = conn.prepareStatement(sqlStm);
+            this.setParamPreparedStm(stm, pValues);
+            res = stm.executeQuery();
+        }
+        catch (Exception ex) {
+            throw  ex;
+        }
+        return res;
     }
 
     /**
+     * Returns resultSet product of execution of sqlStm. requires: the
+     * connection, open it before calling this method, Therefore it is the
+     * caller's responsibility to close the connection. Example: this.conn
+     * =dm.getConnection(); doStatament (....) this.conn.close();
      *
      * @param sqlStm
      * @param pValues
      * @return preparedStatement with no data, after invocation, execute
      * @throws SQLException
+     * @deprecated Not Use this method
      */
     protected PreparedStatement doStmReturn(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
-        // sqlStm += ((pValues.size() > 0 ? " where " : MyCommonString.EMPTYSTR) + queryCond(pValues));
-        this.conn = dm.getConnectioin();
+        Connection conn = dm.getConnectioin();
         PreparedStatement stm = conn.prepareStatement(sqlStm);
-        stm = this.setParamPreparedStm(stm, pValues);
+        this.setParamPreparedStm(stm, pValues);
         return stm;
-        // stm.close();
-        //this.conn.close();
-        // this.conn.close();
     }
 
     public abstract void insert(ArrayList<ParamAction> paramDLs) throws SQLException;
@@ -128,18 +136,19 @@ public abstract class Mapper {
 
     protected abstract Object doLoad(ResultSet rs) throws SQLException;
 
-    public abstract Object doFind(ArrayList<ParamAction> keyFiedls) throws SQLException;
+    public abstract Object doFind(ArrayList<ParamAction> keyFields) throws SQLException;
 
     /**
-     * Este retorna un PreparedStatemets de acuerdo a la lista de objetos de tipo ParamAction 
-     * Este no le interesa los nombres de las columnas ya que asume que la sentencia SQL
-     * tiene los tags "?" que corresponde a los parametros
+     * Este retorna un PreparedStatemets de acuerdo a la lista de objetos de
+     * tipo ParamAction Este no le interesa los nombres de las columnas ya que
+     * asume que la sentencia SQL tiene los tags "?" que corresponde a los
+     * parametros
+     *
      * @param stm
      * @param pValues
-     * @return
      * @throws SQLException
      */
-    protected PreparedStatement setParamPreparedStm(PreparedStatement stm, ArrayList<ParamAction> pValues) throws SQLException {
+    protected void setParamPreparedStm(PreparedStatement stm, ArrayList<ParamAction> pValues) throws SQLException {
         for (int i = 0; i < pValues.size(); i++) {
             switch (pValues.get(i).getDataType()) {
                 case INTEGER:
@@ -166,7 +175,6 @@ public abstract class Mapper {
                     break;
             }
         }
-        return stm;
     }
 
     /**
@@ -174,7 +182,8 @@ public abstract class Mapper {
      *
      * @param pValues
      * @return sql cond in jdbc standard
-     * @deprecated best use ParamAction.queryCond (ArrayList<ParamAction> pValues)
+     * @deprecated best use ParamAction.queryCond (ArrayList<ParamAction>
+     * pValues)
      */
     protected String queryCond(ArrayList<ParamAction> pValues) {
         String res = "";

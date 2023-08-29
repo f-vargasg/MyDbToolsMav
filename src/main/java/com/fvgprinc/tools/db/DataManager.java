@@ -96,9 +96,9 @@ public class DataManager {
         try {
             connection = dataSource.getConnection();
 
-            System.out.println("Conexión exitosa a la base de datos");
+            System.out.println("Conexión exitosa a la base de datos -> "+ java.time.LocalDateTime.now());
         } catch (SQLException e) {
-            System.out.println("Error al conectar a la base de datos: " + e.getMessage());
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage() + java.time.LocalDateTime.now());
             throw e;
         }
         return connection;
