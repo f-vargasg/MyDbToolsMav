@@ -73,10 +73,42 @@ public abstract class Mapper {
         try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(sqlStm);) {
             this.setParamPreparedStm(stm, pValues);
             stm.execute();
-        } 
-        catch (Exception ex) {
-            throw  ex;
+        } catch (Exception ex) {
+            throw ex;
         }
+
+        // this.conn.close();
+    }
+
+    /**
+     *
+     * @param sqlStm
+     * @param pValues
+     * @return
+     * @throws SQLException
+     */
+    protected ResultInsert doStatementInsert(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
+        // PreparedStatement stm;
+        ResultInsert res = null;
+        ArrayList<Long> keys = new ArrayList<>();
+        int affectedRows = 0;
+
+        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(sqlStm, PreparedStatement.RETURN_GENERATED_KEYS);) {
+            this.setParamPreparedStm(stm, pValues);
+            affectedRows = stm.executeUpdate();
+            if (affectedRows > 0) {
+                try ( ResultSet generatedKeys = stm.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        long newId = generatedKeys.getLong(1);
+                        keys.add(newId);
+                    }
+                }
+                res = new ResultInsert(affectedRows, keys);
+            }
+        } catch (Exception ex) {
+            throw ex;
+        }
+        return res;
 
         // this.conn.close();
     }
@@ -102,9 +134,8 @@ public abstract class Mapper {
             PreparedStatement stm = conn.prepareStatement(sqlStm);
             this.setParamPreparedStm(stm, pValues);
             res = stm.executeQuery();
-        }
-        catch (Exception ex) {
-            throw  ex;
+        } catch (Exception ex) {
+            throw ex;
         }
         return res;
     }
