@@ -168,6 +168,38 @@ public abstract class Mapper {
     protected abstract Object doLoad(ResultSet rs) throws SQLException;
 
     public abstract Object doFind(ArrayList<ParamAction> keyFields) throws SQLException;
+    
+    public <T> Object doFind2(ArrayList<ParamAction> keyFiedls, String pSql, T t) throws SQLException {
+        t = null;
+        String wSql = pSql;
+        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(wSql)) {
+            this.setParamPreparedStm(stm, keyFiedls);
+            try ( ResultSet rs = stm.executeQuery();) {
+                if (rs.next()) {
+                    t = (T) load(rs);
+                }
+            }
+        }
+        return t;
+    }
+    
+        public <T> ArrayList<T> listar(ArrayList<ParamAction> params, String pSql,  ArrayList<T> pLst) throws SQLException {
+        ArrayList<T> lstRes = new ArrayList<>();
+        String condSql = ParamAction.queryCond(params);
+        String sqlStm = pSql + (condSql.length() > 0 ? " WHERE " : MyCommonString.EMPTYSTR) + condSql;
+        try ( Connection conn = dm.getConnectioin();  PreparedStatement ps = conn.prepareStatement(sqlStm)) {
+            this.setParamPreparedStm(ps, params);
+            try ( ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    T ub = (T) doLoad(rs);
+                    lstRes.add(ub);
+                }
+            }
+        }
+        return lstRes;
+    }        
+
+
 
     /**
      * Este retorna un PreparedStatemets de acuerdo a la lista de objetos de
