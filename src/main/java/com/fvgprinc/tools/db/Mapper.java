@@ -25,17 +25,6 @@ public abstract class Mapper {
     // protected Connection conn;
     // protected String strConn;
 
-
-    /*
-    public Mapper(int indConn) throws SQLException, CommonDALExceptions  {
-        this.conn = DbConnFactory.getInstance().createDbConnManager()[indConn].createDbConn().getConnection();
-    }
-    
-    public Mapper (Connection pconn)
-    {
-        this.conn = pconn;
-    }
-     */
     /**
      * Given rs, convert to entity.As is until run time, which is known the
      * particular type of the entity, the return type is an object. The doLoad
@@ -70,7 +59,7 @@ public abstract class Mapper {
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // PreparedStatement stm;
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(sqlStm);) {
+        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(sqlStm);) {
             this.setParamPreparedStm(stm, pValues);
             stm.execute();
         } catch (Exception ex) {
@@ -93,11 +82,11 @@ public abstract class Mapper {
         ArrayList<Long> keys = new ArrayList<>();
         int affectedRows = 0;
 
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(sqlStm, PreparedStatement.RETURN_GENERATED_KEYS);) {
+        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(sqlStm, PreparedStatement.RETURN_GENERATED_KEYS);) {
             this.setParamPreparedStm(stm, pValues);
             affectedRows = stm.executeUpdate();
             if (affectedRows > 0) {
-                try ( ResultSet generatedKeys = stm.getGeneratedKeys()) {
+                try (ResultSet generatedKeys = stm.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         long newId = generatedKeys.getLong(1);
                         keys.add(newId);
@@ -130,7 +119,7 @@ public abstract class Mapper {
     @Deprecated
     protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         ResultSet res;
-        try ( Connection conn = dm.getConnectioin()) {
+        try (Connection conn = dm.getConnectioin()) {
             PreparedStatement stm = conn.prepareStatement(sqlStm);
             this.setParamPreparedStm(stm, pValues);
             res = stm.executeQuery();
@@ -168,39 +157,8 @@ public abstract class Mapper {
     protected abstract Object doLoad(ResultSet rs) throws SQLException;
 
     public abstract Object doFind(ArrayList<ParamAction> keyFields) throws SQLException;
+
     
-    public <T> Object doFind2(ArrayList<ParamAction> keyFiedls, String pSql, T t) throws SQLException {
-        t = null;
-        String wSql = pSql;
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(wSql)) {
-            this.setParamPreparedStm(stm, keyFiedls);
-            try ( ResultSet rs = stm.executeQuery();) {
-                if (rs.next()) {
-                    t = (T) load(rs);
-                }
-            }
-        }
-        return t;
-    }
-    
-        public <T> ArrayList<T> listar(ArrayList<ParamAction> params, String pSql,  ArrayList<T> pLst) throws SQLException {
-        ArrayList<T> lstRes = new ArrayList<>();
-        String condSql = ParamAction.queryCond(params);
-        String sqlStm = pSql + (condSql.length() > 0 ? " WHERE " : MyCommonString.EMPTYSTR) + condSql;
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement ps = conn.prepareStatement(sqlStm)) {
-            this.setParamPreparedStm(ps, params);
-            try ( ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    T ub = (T) doLoad(rs);
-                    lstRes.add(ub);
-                }
-            }
-        }
-        return lstRes;
-    }        
-
-
-
     /**
      * Este retorna un PreparedStatemets de acuerdo a la lista de objetos de
      * tipo ParamAction Este no le interesa los nombres de las columnas ya que
