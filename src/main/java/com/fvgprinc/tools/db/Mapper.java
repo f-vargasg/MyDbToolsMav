@@ -22,6 +22,8 @@ public abstract class Mapper {
      *
      */
     protected DataManager dm;
+    
+    protected StoredProcedureCall spCall;
     // protected Connection conn;
     // protected String strConn;
 
