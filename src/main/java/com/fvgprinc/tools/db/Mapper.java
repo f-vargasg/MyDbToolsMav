@@ -4,6 +4,7 @@
  */
 package com.fvgprinc.tools.db;
 
+import static com.fvgprinc.tools.db.ParamAction.JavaTypes.TIMESTAMPJAVASQL;
 import com.fvgprinc.tools.string.MyCommonString;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,27 +16,10 @@ import java.util.ArrayList;
  *
  * @author fvargas
  */
-public abstract class Mapper {
+public abstract class Mapper<T> {
 
-//   protected ConnectionDB dbConn;
-    /**
-     *
-     */
     protected DataManager dm;
-    // protected Connection conn;
-    // protected String strConn;
 
-
-    /*
-    public Mapper(int indConn) throws SQLException, CommonDALExceptions  {
-        this.conn = DbConnFactory.getInstance().createDbConnManager()[indConn].createDbConn().getConnection();
-    }
-    
-    public Mapper (Connection pconn)
-    {
-        this.conn = pconn;
-    }
-     */
     /**
      * Given rs, convert to entity.As is until run time, which is known the
      * particular type of the entity, the return type is an object. The doLoad
@@ -45,8 +29,8 @@ public abstract class Mapper {
      * @return
      * @throws SQLException
      */
-    public Object load(ResultSet rs) throws SQLException {
-        return this.doLoad(rs);
+    public T load(ResultSet rs) throws SQLException {
+        return (T) this.doLoad(rs);
     }
 
     /**
@@ -57,7 +41,7 @@ public abstract class Mapper {
      * @return
      * @throws SQLException
      */
-    public Object find(ArrayList<ParamAction> keyValueFields) throws SQLException {
+    public T find(ArrayList<ParamAction> keyValueFields) throws SQLException {
         return this.doFind(keyValueFields);
     }
 
@@ -70,7 +54,7 @@ public abstract class Mapper {
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // PreparedStatement stm;
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(sqlStm);) {
+        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(sqlStm);) {
             this.setParamPreparedStm(stm, pValues);
             stm.execute();
         } catch (Exception ex) {
@@ -93,11 +77,11 @@ public abstract class Mapper {
         ArrayList<Long> keys = new ArrayList<>();
         int affectedRows = 0;
 
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(sqlStm, PreparedStatement.RETURN_GENERATED_KEYS);) {
+        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(sqlStm, PreparedStatement.RETURN_GENERATED_KEYS);) {
             this.setParamPreparedStm(stm, pValues);
             affectedRows = stm.executeUpdate();
             if (affectedRows > 0) {
-                try ( ResultSet generatedKeys = stm.getGeneratedKeys()) {
+                try (ResultSet generatedKeys = stm.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         long newId = generatedKeys.getLong(1);
                         keys.add(newId);
@@ -110,53 +94,6 @@ public abstract class Mapper {
         }
         return res;
 
-        // this.conn.close();
-    }
-
-    /**
-     * Returns resultSet product of execution of sqlStm. requires: the
-     * connection, open it before calling this method, Therefore it is the
-     * caller's responsibility to close the connection. Example: this.conn
-     * =dm.getConnection(); doStatament (....) this.conn.close();
-     *
-     * @param sqlStm
-     * @param pValues
-     * @return resultset of the execution of sqlStm, don't close connection The
-     * invoker, can be close connection
-     * @throws SQLException
-     * @deprecated use {@link #doStmReturn(java.lang.String, java.util.ArrayList)
-     * }
-     */
-    @Deprecated
-    protected ResultSet doStmReturnData(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
-        ResultSet res;
-        try ( Connection conn = dm.getConnectioin()) {
-            PreparedStatement stm = conn.prepareStatement(sqlStm);
-            this.setParamPreparedStm(stm, pValues);
-            res = stm.executeQuery();
-        } catch (Exception ex) {
-            throw ex;
-        }
-        return res;
-    }
-
-    /**
-     * Returns resultSet product of execution of sqlStm. requires: the
-     * connection, open it before calling this method, Therefore it is the
-     * caller's responsibility to close the connection. Example: this.conn
-     * =dm.getConnection(); doStatament (....) this.conn.close();
-     *
-     * @param sqlStm
-     * @param pValues
-     * @return preparedStatement with no data, after invocation, execute
-     * @throws SQLException
-     * @deprecated Not Use this method
-     */
-    protected PreparedStatement doStmReturn(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
-        Connection conn = dm.getConnectioin();
-        PreparedStatement stm = conn.prepareStatement(sqlStm);
-        this.setParamPreparedStm(stm, pValues);
-        return stm;
     }
 
     public abstract void insert(ArrayList<ParamAction> paramDLs) throws SQLException;
@@ -165,25 +102,31 @@ public abstract class Mapper {
 
     public abstract void delete(ArrayList<ParamAction> keyFields) throws SQLException;
 
-    protected abstract Object doLoad(ResultSet rs) throws SQLException;
+    protected abstract T doLoad(ResultSet rs) throws SQLException;
 
-    public abstract Object doFind(ArrayList<ParamAction> keyFields) throws SQLException;
-    
-    public <T> Object doFind2(ArrayList<ParamAction> keyFiedls, String pSql, T t) throws SQLException {
-        t = null;
+    public abstract T doFind(ArrayList<ParamAction> keyFields) throws SQLException;
+
+    /**
+     * Implementación genérica de 'find'. La clase hija puede llamar a este
+     * método en lugar de reescribir la lógica.
+     */
+    // <-- CAMBIO: Ya no es <T> Object, sino T (usa el genérico de la clase)
+    public T doFind2(ArrayList<ParamAction> keyFiedls, String pSql) throws SQLException {
+        T t = null;
         String wSql = pSql;
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement stm = conn.prepareStatement(wSql)) {
+        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(wSql)) {
             this.setParamPreparedStm(stm, keyFiedls);
-            try ( ResultSet rs = stm.executeQuery();) {
+            try (ResultSet rs = stm.executeQuery();) {
                 if (rs.next()) {
-                    t = (T) load(rs);
+                    // <-- CAMBIO: Llama a load(rs) que ahora devuelve T. ¡Sin cast!
+                    t = load(rs);
                 }
             }
         }
         return t;
     }
-    
-        public <T> ArrayList<T> listar(ArrayList<ParamAction> params, String pSql,  ArrayList<T> pLst) throws SQLException {
+
+    public ArrayList<T> listar(ArrayList<ParamAction> params, String pSql) throws SQLException {
         ArrayList<T> lstRes = new ArrayList<>();
         String condSql = ParamAction.queryCond(params);
         String sqlStm = pSql + (condSql.length() > 0 ? " WHERE " : MyCommonString.EMPTYSTR) + condSql;
@@ -191,15 +134,14 @@ public abstract class Mapper {
             this.setParamPreparedStm(ps, params);
             try ( ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    T ub = (T) doLoad(rs);
+                     // <-- CAMBIO: Llama a load(rs) que ahora devuelve T. ¡Sin cast!
+                    T ub = load(rs);
                     lstRes.add(ub);
                 }
             }
         }
         return lstRes;
-    }        
-
-
+    }
 
     /**
      * Este retorna un PreparedStatemets de acuerdo a la lista de objetos de
@@ -229,6 +171,9 @@ public abstract class Mapper {
                 case TIMESTAMPJAVASQL:
                     stm.setTimestamp(i + 1, (java.sql.Timestamp) pValues.get(i).getValue());
                     break;
+                case LOCALDATE:
+                    stm.setObject(i + 1,  pValues.get(i).getValue());
+                    break;                    
                 case LONG:
                     stm.setLong(i + 1, (Long) (pValues.get(i).getValue()));
                     break;
@@ -239,27 +184,4 @@ public abstract class Mapper {
             }
         }
     }
-
-    /**
-     * Get query jdbc standard (ie fiedl1 = ? and field2 = ? .... and fieldn= ?
-     *
-     * @param pValues
-     * @return sql cond in jdbc standard
-     * @deprecated best use ParamAction.queryCond (ArrayList<ParamAction>
-     * pValues)
-     */
-    protected String queryCond(ArrayList<ParamAction> pValues) {
-        String res = "";
-        boolean ft = true;
-        for (int i = 0; i < pValues.size(); i++) {
-            // res += ((!ft ? " and " : MyCommonString.EMPTYSTR) + pValues.get(i).getColumName() + " =  ?");
-            String cond = pValues.get(i).buildCond();
-            if (cond.compareTo(MyCommonString.EMPTYSTR) != 0) {
-                res += ((!ft ? " and " : MyCommonString.EMPTYSTR) + cond);
-            }
-            ft = false;
-        }
-        return res;
-    }
-
 }
