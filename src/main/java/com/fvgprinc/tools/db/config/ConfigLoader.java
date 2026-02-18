@@ -12,7 +12,8 @@ import java.io.File;
 public class ConfigLoader {
     private static JsonNode rootNode;
     private static final String FILE_NAME = "config.json";
-
+    // user.dir, es el path donde se encuentra ubicada la aplicación
+    // es como una variable de ambiente multiplataforma de Java
     static {
         try {
             String path = System.getProperty("user.dir") + File.separator + FILE_NAME;
