@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public abstract class Mapper<T> {
 
     protected DataManager dm;
+    protected StoredProcedureCall spCall;
 
     /**
      * Given rs, convert to entity.As is until run time, which is known the
@@ -130,11 +131,11 @@ public abstract class Mapper<T> {
         ArrayList<T> lstRes = new ArrayList<>();
         String condSql = ParamAction.queryCond(params);
         String sqlStm = pSql + (condSql.length() > 0 ? " WHERE " : MyCommonString.EMPTYSTR) + condSql;
-        try ( Connection conn = dm.getConnectioin();  PreparedStatement ps = conn.prepareStatement(sqlStm)) {
+        try (Connection conn = dm.getConnectioin(); PreparedStatement ps = conn.prepareStatement(sqlStm)) {
             this.setParamPreparedStm(ps, params);
-            try ( ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                     // <-- CAMBIO: Llama a load(rs) que ahora devuelve T. ¡Sin cast!
+                    // <-- CAMBIO: Llama a load(rs) que ahora devuelve T. ¡Sin cast!
                     T ub = load(rs);
                     lstRes.add(ub);
                 }
@@ -172,8 +173,8 @@ public abstract class Mapper<T> {
                     stm.setTimestamp(i + 1, (java.sql.Timestamp) pValues.get(i).getValue());
                     break;
                 case LOCALDATE:
-                    stm.setObject(i + 1,  pValues.get(i).getValue());
-                    break;                    
+                    stm.setObject(i + 1, pValues.get(i).getValue());
+                    break;
                 case LONG:
                     stm.setLong(i + 1, (Long) (pValues.get(i).getValue()));
                     break;
