@@ -1,8 +1,6 @@
-import com.fvgprinc.tools.db.DataManager;
-import com.fvgprinc.tools.db.ParamAction;
+package com.fvgprinc.tools.db;
+
 import static com.fvgprinc.tools.db.ParamAction.JavaTypes.TIMESTAMPJAVASQL;
-import com.fvgprinc.tools.db.ResultInsert;
-import com.fvgprinc.tools.db.StoredProcedureCall;
 import com.fvgprinc.tools.string.MyCommonString;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
