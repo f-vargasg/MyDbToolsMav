@@ -1,9 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package com.fvgprinc.tools.db;
 
+import com.fvgprinc.tools.db.config.ConfigLoader;
+import com.fvgprinc.tools.db.config.DbConnectionBe;
 import com.fvgprinc.tools.string.MyCommonString;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,13 +37,62 @@ public class DataManager {
     private DataSource dataSource;
 
     public DataManager(String pDataBaseName) {
-        try {
-            readConfigurationDb(pDataBaseName);
-        } catch (ConfigurationException ex) {
-            Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, null, ex);
+
+           // 1. Intentamos cargar desde el nuevo formato JSON
+        boolean cargadoConJson = readConfigurationJson(pDataBaseName);
+        
+        // 2. Fallback: Si no se encontró en JSON, intentamos el XML legacy
+        if (!cargadoConJson) {
+            try {
+                readConfigurationDb(pDataBaseName);
+            } catch (ConfigurationException ex) {
+                Logger.getLogger(DataManager.class.getName()).log(Level.SEVERE, "Error en configuración legacy", ex);
+            }
         }
     }
 
+    /**
+     * Nueva rutina para leer la configuración desde el archivo JSON.
+     * @return true si logró configurar el DataSource, false de lo contrario.
+     */
+    private boolean readConfigurationJson(String pDataBaseName) {
+        DbConnectionBe config = ConfigLoader.getConnectionById(pDataBaseName);
+        
+        if (config == null) return false; // No existe en el JSON
+
+        String dbDriver = config.getDbDriver();
+        String dbUrl = config.getDbUrl();
+        String dbUserName = config.getDbUsuario();
+
+        if (dbDriver.toUpperCase().contains("SQLITE")) {
+            SQLiteDataSource sqliteDataSource = new SQLiteConnectionPoolDataSource();
+            sqliteDataSource.setUrl(dbUrl);
+            this.dataSource = sqliteDataSource;
+        } else if (dbDriver.toUpperCase().contains("HSQLDB")) {
+            JDBCDataSource HsqlDbDataSource = new JDBCDataSource();
+            HsqlDbDataSource.setURL(dbUrl);
+            HsqlDbDataSource.setUser(dbUserName);
+            this.dataSource = HsqlDbDataSource;
+        } else {
+            this.dataBaseName = config.getDbIdConn();
+            BasicDataSource basicDataSource = new BasicDataSource();
+            basicDataSource.setDriverClassName(dbDriver);
+            basicDataSource.setUrl(dbUrl);
+            basicDataSource.setUsername(dbUserName);
+            basicDataSource.setPassword(config.getDbPassw());
+            
+            // Usamos los parámetros de pooling que incluimos en la entidad
+            if (config.getDbPoolInicial() != null) {
+                basicDataSource.setInitialSize(config.getDbPoolInicial());
+            }
+            if (config.getDbPoolMax() != null) {
+                basicDataSource.setMaxTotal(config.getDbPoolMax());
+            }
+            this.dataSource = basicDataSource;
+        }
+        return true;
+    }
+    
     private void readConfigurationDb(String pDataBaseName) throws ConfigurationException {
 
         // read configuracion from configuration file
