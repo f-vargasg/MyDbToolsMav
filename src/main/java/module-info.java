@@ -14,4 +14,5 @@ module com.fvgprinc.tools.db {
     requires org.mariadb.jdbc;
     requires org.xerial.sqlitejdbc;
     requires org.hsqldb;
+    requires com.fasterxml.jackson.databind;
 }
