@@ -1,10 +1,15 @@
-
+  
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.fvgprinc.tools.db;
 
 /**
  *
  * @author Ryzen9-Gaming
  */
+
 public class ParamStoredProc {
     private String name;
     private ParamAction.JavaTypes type;
@@ -63,6 +68,5 @@ public class ParamStoredProc {
         this.value = value;
     }
     
-    
-   
+        
 }
