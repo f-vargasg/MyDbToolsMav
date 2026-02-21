@@ -1,4 +1,3 @@
-
 package com.fvgprinc.tools.db;
 
 import com.fvgprinc.tools.db.config.ConfigLoader;
@@ -38,9 +37,9 @@ public class DataManager {
 
     public DataManager(String pDataBaseName) {
 
-           // 1. Intentamos cargar desde el nuevo formato JSON
+        // 1. Intentamos cargar desde el nuevo formato JSON
         boolean cargadoConJson = readConfigurationJson(pDataBaseName);
-        
+
         // 2. Fallback: Si no se encontró en JSON, intentamos el XML legacy
         if (!cargadoConJson) {
             try {
@@ -53,13 +52,15 @@ public class DataManager {
 
     /**
      * Nueva rutina para leer la configuración desde el archivo JSON.
+     *
      * @return true si logró configurar el DataSource, false de lo contrario.
      */
     private boolean readConfigurationJson(String pDataBaseName) {
         DbConnectionBe config = ConfigLoader.getConnectionById(pDataBaseName);
-        
-        if (config == null) return false; // No existe en el JSON
 
+        if (config == null) {
+            return false; // No existe en el JSON
+        }
         String dbDriver = config.getDbDriver();
         String dbUrl = config.getDbUrl();
         String dbUserName = config.getDbUsuario();
@@ -80,7 +81,7 @@ public class DataManager {
             basicDataSource.setUrl(dbUrl);
             basicDataSource.setUsername(dbUserName);
             basicDataSource.setPassword(config.getDbPassw());
-            
+
             // Usamos los parámetros de pooling que incluimos en la entidad
             if (config.getDbPoolInicial() != null) {
                 basicDataSource.setInitialSize(config.getDbPoolInicial());
@@ -92,7 +93,7 @@ public class DataManager {
         }
         return true;
     }
-    
+
     private void readConfigurationDb(String pDataBaseName) throws ConfigurationException {
 
         // read configuracion from configuration file
@@ -143,8 +144,7 @@ public class DataManager {
         Connection connection;
         try {
             connection = dataSource.getConnection();
-
-            System.out.println("Conexión exitosa a la base de datos -> "+ java.time.LocalDateTime.now());
+            System.out.println("Conexión exitosa a la base de datos -> " + java.time.LocalDateTime.now());
         } catch (SQLException e) {
             System.out.println("Error al conectar a la base de datos: " + e.getMessage() + java.time.LocalDateTime.now());
             throw e;
