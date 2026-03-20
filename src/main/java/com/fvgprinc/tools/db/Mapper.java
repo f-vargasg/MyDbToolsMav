@@ -51,7 +51,8 @@ public abstract class Mapper<T> {
      */
     protected void doStatement(String sqlStm, ArrayList<ParamAction> pValues) throws SQLException {
         // PreparedStatement stm;
-        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(sqlStm);) {
+    //    try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(sqlStm);) {
+         try (Connection conn = dm.getConnection(); PreparedStatement stm = conn.prepareStatement(sqlStm);) {
             this.setParamPreparedStm(stm, pValues);
             stm.execute();
         } catch (Exception ex) {
@@ -74,7 +75,7 @@ public abstract class Mapper<T> {
         ArrayList<Long> keys = new ArrayList<>();
         int affectedRows = 0;
 
-        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(sqlStm, PreparedStatement.RETURN_GENERATED_KEYS);) {
+        try (Connection conn = dm.getConnection(); PreparedStatement stm = conn.prepareStatement(sqlStm, PreparedStatement.RETURN_GENERATED_KEYS);) {
             this.setParamPreparedStm(stm, pValues);
             affectedRows = stm.executeUpdate();
             if (affectedRows > 0) {

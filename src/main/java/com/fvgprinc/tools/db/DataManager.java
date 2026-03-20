@@ -35,6 +35,11 @@ public class DataManager {
 
     private DataSource dataSource;
 
+    // --- NUEVO: Manejo de Contexto de Sesión ---
+    private static String sessionUsuarioId;
+    private static String sessionIpMaquina;
+    private static String sessionOtherInfo;
+
     public DataManager(String pDataBaseName) {
 
         // 1. Intentamos cargar desde el nuevo formato JSON
@@ -140,6 +145,16 @@ public class DataManager {
         }
     }
 
+    public static void setSession(String usuarioId, String ip, String otherInfo) {
+        sessionUsuarioId = usuarioId;
+        sessionIpMaquina = ip;
+        sessionOtherInfo = otherInfo;
+    }
+
+    /**
+     * @deprecated Este método ha sido reemplazado por {@link #getConnection()}
+     */
+    @Deprecated
     public Connection getConnectioin() throws SQLException {
         Connection connection;
         try {
@@ -150,6 +165,32 @@ public class DataManager {
             throw e;
         }
         return connection;
+    }
+
+    public Connection getConnection() throws SQLException {
+        Connection connection;
+        try {
+            connection = dataSource.getConnection();
+            if (sessionUsuarioId != null) {
+                initMariaDbSession(connection);
+            }
+            System.out.println("Conexión exitosa a la base de datos -> " + java.time.LocalDateTime.now());
+
+        } catch (SQLException e) {
+            System.out.println("Error al conectar a la base de datos: " + e.getMessage() + java.time.LocalDateTime.now());
+            throw e;
+        }
+        return connection;
+    }
+
+    private void initMariaDbSession(Connection conn) throws SQLException {
+        String sql = "SET @usuario_id = ?, @ip_maquina = ?, @other_info = ?";
+        try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, sessionUsuarioId);
+            ps.setString(2, sessionIpMaquina);
+            ps.setString(3, sessionOtherInfo);
+            ps.execute();
+        }
     }
 
 }
