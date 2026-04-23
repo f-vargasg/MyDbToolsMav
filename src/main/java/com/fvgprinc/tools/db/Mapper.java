@@ -112,7 +112,7 @@ public abstract class Mapper<T> {
     public T doFind2(ArrayList<ParamAction> keyFiedls, String pSql) throws SQLException {
         T t = null;
         String wSql = pSql;
-        try (Connection conn = dm.getConnectioin(); PreparedStatement stm = conn.prepareStatement(wSql)) {
+        try (Connection conn = dm.getConnection(); PreparedStatement stm = conn.prepareStatement(wSql)) {
             this.setParamPreparedStm(stm, keyFiedls);
             try (ResultSet rs = stm.executeQuery();) {
                 if (rs.next()) {
@@ -128,7 +128,7 @@ public abstract class Mapper<T> {
         ArrayList<T> lstRes = new ArrayList<>();
         String condSql = ParamAction.queryCond(params);
         String sqlStm = pSql + (condSql.length() > 0 ? " WHERE " : MyCommonString.EMPTYSTR) + condSql;
-        try (Connection conn = dm.getConnectioin(); PreparedStatement ps = conn.prepareStatement(sqlStm)) {
+        try (Connection conn = dm.getConnection(); PreparedStatement ps = conn.prepareStatement(sqlStm)) {
             this.setParamPreparedStm(ps, params);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
