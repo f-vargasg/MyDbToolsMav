@@ -38,6 +38,7 @@ public class DataManager {
     // --- NUEVO: Manejo de Contexto de Sesión ---
     private static String sessionUsuarioId;
     private static String sessionIpMaquina;
+    private static String sessionIdCiaActual;
     private static String sessionOtherInfo;
 
     public DataManager(String pDataBaseName) {
@@ -145,9 +146,10 @@ public class DataManager {
         }
     }
 
-    public static void setSession(String usuarioId, String ip, String otherInfo) {
+    public static void setSession(String usuarioId, String ip, String idCompaniaActual, String otherInfo) {
         sessionUsuarioId = usuarioId;
         sessionIpMaquina = ip;
+        sessionIdCiaActual = idCompaniaActual;
         sessionOtherInfo = otherInfo;
     }
 
@@ -184,11 +186,12 @@ public class DataManager {
     }
 
     private void initMariaDbSession(Connection conn) throws SQLException {
-        String sql = "SET @usuario_id = ?, @ip_maquina = ?, @other_info = ?";
+        String sql = "SET @usuario_id = ?, @ip_maquina = ?,  @id_compania_actual=?,  @other_info = ?";
         try (java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, sessionUsuarioId);
             ps.setString(2, sessionIpMaquina);
-            ps.setString(3, sessionOtherInfo);
+            ps.setString(3, sessionIdCiaActual);            
+            ps.setString(4, sessionOtherInfo);
             ps.execute();
         }
     }
