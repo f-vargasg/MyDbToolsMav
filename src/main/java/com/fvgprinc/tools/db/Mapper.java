@@ -155,7 +155,11 @@ public abstract class Mapper<T> {
         for (int i = 0; i < pValues.size(); i++) {
             switch (pValues.get(i).getDataType()) {
                 case INTEGER:
-                    stm.setInt(i + 1, (Integer) (pValues.get(i).getValue()));
+                    // stm.setInt(i + 1, (Integer) (pValues.get(i).getValue()));
+                    if (pValues.get(i).getValue() != null) {
+                            stm.setInt(i + 1, (Integer) (pValues.get(i).getValue()));
+                    } else 
+                        stm.setNull(i + 1, java.sql.Types.INTEGER);
                     break;
                 case DOUBLE:
                     stm.setDouble(i + 1, (Double) (pValues.get(i).getValue()));
